@@ -53,7 +53,11 @@ at the same time.
 ===============================================================================
 */
 
+#ifdef __ANDROID__
+kbutton_t kb[NUM_BUTTONS];
+#else
 static kbutton_t kb[NUM_BUTTONS];
+#endif
 
 #ifdef USE_VOIP
 kbutton_t	in_voiprecord;
@@ -627,7 +631,9 @@ void CL_FinishMove( usercmd_t *cmd ) {
 	}
 }
 
-
+#ifdef __ANDROID__
+void CL_AndroidMove( usercmd_t *cmd, float frame_msec  );
+#endif
 /*
 =================
 CL_CreateCmd
@@ -655,6 +661,10 @@ usercmd_t CL_CreateCmd( void ) {
 
 	// get basic movement from joystick
 	CL_JoystickMove( &cmd );
+
+#ifdef __ANDROID__
+	CL_AndroidMove( &cmd, frame_msec  );
+#endif
 
 	// check to make sure the angles haven't wrapped
 	if ( cl.viewangles[PITCH] - oldAngles[PITCH] > 90 ) {

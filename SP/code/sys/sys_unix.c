@@ -785,6 +785,10 @@ Display a *nix dialog box
 */
 dialogResult_t Sys_Dialog( dialogType_t type, const char *message, const char *title )
 {
+#ifdef __ANDROID__
+	LOGI("Sys_Dialog: %s  ---   %s", title, message);
+	return DR_OK;
+#endif
 	typedef enum
 	{
 		NONE = 0,
@@ -998,13 +1002,20 @@ qboolean Sys_DllExtension( const char *name ) {
 	return qfalse;
 }
 
+#ifdef __ANDROID__
+extern const char *nativeLibsPath;
+#endif
 /*
 ==============
 Sys_GetDLLName
 ==============
 */
 char* Sys_GetDLLName( const char *name ) {
+#ifdef __ANDROID__
+	return va("%s/libiortcw_%s.sp.so", nativeLibsPath, name);
+#else
 	return va("%s.sp." ARCH_STRING DLL_EXT, name);
+#endif
 }
 
 /*

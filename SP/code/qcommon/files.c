@@ -563,14 +563,14 @@ Creates any directories needed to store the given filename
 qboolean FS_CreatePath (char *OSPath) {
 	char    *ofs;
 	char	path[MAX_OSPATH];
-
+#ifndef __ANDROID__
 	// make absolutely sure that it can't back up the path
 	// FIXME: is c: allowed???
 	if ( strstr( OSPath, ".." ) || strstr( OSPath, "::" ) ) {
 		Com_Printf( "WARNING: refusing to create relative path \"%s\"\n", OSPath );
 		return qtrue;
 	}
-
+#endif
 	Q_strncpyz( path, OSPath, sizeof( path ) );
 	FS_ReplaceSeparators( path );
 
@@ -1700,8 +1700,11 @@ int FS_FindVM(void **startSearch, char *found, int foundlen, const char *name, i
 
 			if(enableDll)
 			{
+#ifdef __ANDROID__
+				netpath = dllName;
+#else
 				netpath = FS_BuildOSPath(dir->path, dir->gamedir, dllName);
-
+#endif
 				if(FS_FileInPathExists(netpath))
 				{
 					Q_strncpyz(found, netpath, foundlen);

@@ -177,7 +177,10 @@ static void SNDDMA_PrintAudiospec(const char *str, const SDL_AudioSpec *spec)
 	Com_Printf( "  Samples:  %d\n", (int) spec->samples );
 	Com_Printf( "  Channels: %d\n", (int) spec->channels );
 }
-
+#ifdef __ANDROID__
+extern int AUDIO_OVERRIDE_FREQ;
+extern int AUDIO_OVERRIDE_SAMPLES;
+#endif
 /*
 ===============
 SNDDMA_Init
@@ -222,7 +225,11 @@ qboolean SNDDMA_Init(void)
 		tmp = 16;
 
 	desired.freq = (int) s_sdlSpeed->value;
+#ifdef __ANDROID__
+    if(!desired.freq) desired.freq = 44100;
+#else
 	if(!desired.freq) desired.freq = 22050;
+#endif
 	desired.format = ((tmp == 16) ? AUDIO_S16SYS : AUDIO_U8);
 
 	// I dunno if this is the best idea, but I'll give it a try...
@@ -241,6 +248,14 @@ qboolean SNDDMA_Init(void)
 		else
 			desired.samples = 2048;  // (*shrug*)
 	}
+
+#ifdef __ANDROID__
+    if (AUDIO_OVERRIDE_FREQ != 0)
+        desired.freq = AUDIO_OVERRIDE_FREQ;
+
+    if (AUDIO_OVERRIDE_SAMPLES != 0)
+        desired.samples = AUDIO_OVERRIDE_SAMPLES;
+#endif
 
 	desired.channels = (int) s_sdlChannels->value;
 	desired.callback = SNDDMA_AudioCallback;
