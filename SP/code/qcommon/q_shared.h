@@ -29,6 +29,11 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __Q_SHARED_H
 #define __Q_SHARED_H
 
+#ifdef __ANDROID__
+#include <android/log.h>
+#define LOGI(...)  __android_log_print(ANDROID_LOG_INFO,"IORTCW",__VA_ARGS__)
+#endif
+
 // q_shared.h -- included first by ALL program modules.
 // A user mod should never modify this file
 
