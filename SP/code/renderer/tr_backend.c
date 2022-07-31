@@ -409,11 +409,13 @@ to actually render the visible surfaces for this view
 void RB_BeginDrawingView( void ) {
 	int clearBits = 0;
 
+#ifndef __ANDROID__
 	// sync with gl if needed
 	if ( r_finish->integer == 1 && !glState.finishCalled ) {
 		qglFinish();
 		glState.finishCalled = qtrue;
 	}
+#endif
 	if ( r_finish->integer == 0 ) {
 		glState.finishCalled = qtrue;
 	}
@@ -1149,8 +1151,10 @@ void RE_StretchRaw( int x, int y, int w, int h, int cols, int rows, const byte *
 		RB_EndSurface();
 	}
 
+#ifndef __ANDROID__
 	// we definately want to sync every frame for the cinematics
 	qglFinish();
+#endif
 
 	start = 0;
 	if ( r_speeds->integer ) {
@@ -1639,10 +1643,11 @@ const void  *RB_SwapBuffers( const void *data ) {
 	}
 #endif
 
-
+#ifndef __ANDROID__ // Never glFinish on mobile, destorys pipline
 	if ( !glState.finishCalled ) {
 		qglFinish();
 	}
+#endif
 
 	GLimp_LogComment( "***************** RB_SwapBuffers *****************\n\n\n" );
 

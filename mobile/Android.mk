@@ -11,7 +11,7 @@ RTCW_LOCAL_CFLAGS :=  -DQUAKE3 -DENGINE_NAME=\"q3lite\"    -Wall -fno-strict-ali
                                                        -DFT2_BUILD_LIBRARY -DUSE_LOCAL_HEADERS -DPRODUCT_VERSION=\"1.51d-SP_GIT_191e8d10-2022-04-09\" -Wformat=2 \
                                                        -Wformat-security -Wno-format-nonliteral -Wstrict-aliasing=2 -Wmissing-format-attribute -Wdisabled-optimization \
                                                        -MMD -DNDEBUG -DBOTLIB  -DHAVE_LRINTF -DFLOATING_POINT -DFLOAT_APPROX \
-                                                       -DUSE_ALLOCA  -DUSE_RENDERER_DLOPEN -DUSE_BLOOM -DIOAPI_NO_64 \
+                                                       -DUSE_ALLOCA  -DUSE_RENDERER_DLOPEN -DIOAPI_NO_64 \
 
 
 #-DBUILD_FREETYPE
