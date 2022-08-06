@@ -2790,6 +2790,14 @@ void Com_Frame( void ) {
 
 	Cbuf_Execute();
 
+#ifdef __ANDROID__
+	const char * IN_Android_GetCommand();
+	const char * cmd = IN_Android_GetCommand();
+	if(cmd)
+	{
+		Cmd_ExecuteString( cmd );
+	}
+#endif
 	if (com_altivec->modified)
 	{
 		Com_DetectAltivec();

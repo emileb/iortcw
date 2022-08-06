@@ -6957,21 +6957,44 @@ void _UI_KeyEvent( int key, qboolean down ) {
 	//}
 }
 
+#ifdef __ANDROID__
+extern int g_snapMenuItems;
+#endif
 /*
 =================
 UI_MouseEvent
 =================
 */
-void _UI_MouseEvent( int dx, int dy ) {
+void _UI_MouseEvent( int dx, int dy )
+{
+#ifdef __ANDROID__
+	// 0x1000000 is added on to dx/dy when in absoulte mode, so we won't need to add a new interface
+
 	// update mouse screen position
+	if (dx > 0x1000000 / 2)
+	{
+		g_snapMenuItems = 1; // Snap in absolute mode because we are using touch screen
+		uiInfo.uiDC.cursorx = (dx - 0x1000000);
+	}
+	else
+	{
+		g_snapMenuItems = 0;
+		uiInfo.uiDC.cursorx += dx;
+	}
+#else
 	uiInfo.uiDC.cursorx += dx;
+#endif
 	if ( uiInfo.uiDC.cursorx < 0 ) {
 		uiInfo.uiDC.cursorx = 0;
 	} else if ( uiInfo.uiDC.cursorx > SCREEN_WIDTH ) {
 		uiInfo.uiDC.cursorx = SCREEN_WIDTH;
 	}
-
-	uiInfo.uiDC.cursory += dy;
+#ifdef __ANDROID__
+	if(dy > 0x1000000 / 2)
+		uiInfo.uiDC.cursory = (dy - 0x1000000);
+	else
+#endif
+		uiInfo.uiDC.cursory += dy;
 	if ( uiInfo.uiDC.cursory < 0 ) {
 		uiInfo.uiDC.cursory = 0;
 	} else if ( uiInfo.uiDC.cursory > SCREEN_HEIGHT ) {
