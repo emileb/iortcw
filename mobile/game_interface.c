@@ -169,7 +169,7 @@ void PortableAction(int state, int action)
             }
                 break;
             case PORT_ACT_USE:
-                (state) ? KeyDownPort(&kb[KB_BUTTONS2]) : KeyUpPort(&kb[KB_BUTTONS2]);
+                (state) ? KeyDownPort(&kb[KB_BUTTONS6]) : KeyUpPort(&kb[KB_BUTTONS6]);
                 break;
             case PORT_ACT_ATTACK:
                 (state) ? KeyDownPort(&kb[KB_BUTTONS0]) : KeyUpPort(&kb[KB_BUTTONS0]);
@@ -186,7 +186,6 @@ void PortableAction(int state, int action)
                 (activate) ? KeyDownPort(&kb[KB_DOWN]) : KeyUpPort(&kb[KB_DOWN]);
             }
                 break;
-                //TODO make fifo, possibly not thread safe!!
             case PORT_ACT_NEXT_WEP:
                 if (state)
                     PortableCommand("weapnext\n");
@@ -208,6 +207,14 @@ void PortableAction(int state, int action)
                         PortableCommand("+scores\n");
                     scoresShown = !scoresShown;
                 }
+                break;
+            case PORT_ACT_QUICKSAVE:
+                if (state)
+                    PortableCommand("savegame quicksave\n");
+                break;
+            case PORT_ACT_QUICKLOAD:
+                if (state)
+                    PortableCommand("loadgame quicksave\n");
                 break;
         }
     }
@@ -242,9 +249,19 @@ void PortableMouse(float dx, float dy)
     dx *= 1500;
     dy *= 1200;
 
-    Com_QueueEvent(0, SE_MOUSE, -dx, -dy, 0, NULL);
+    int x = -dx;
+    int y = -dy;
+    Com_QueueEvent(0, SE_MOUSE, x | 0x40000000, y, 0, NULL);
+}
+void PortableMouseAbs(float x, float y)
+{
+    Com_QueueEvent(0, SE_MOUSE, x + 0x1000000, y + 0x1000000, 0, NULL);
 }
 
+void PortableAutomapControl(float zoom, float x, float y)
+{
+
+}
 
 // =================== FORWARD and SIDE MOVMENT ==============
 
@@ -306,14 +323,21 @@ void PortableLookYaw(int mode, float yaw)
     }
 }
 
-void IN_Android_Commands()
+const char * IN_Android_GetCommand()
 {
-    if (quickCommand)
+    const char * cmd = NULL;
+
+    if(quickCommand)
     {
-        Cmd_ExecuteString(quickCommand);
-        quickCommand = 0;
+        cmd = quickCommand;
+        quickCommand = NULL;
     }
 
+    return cmd;
+}
+
+void IN_Android_Commands()
+{
     if (PortableGetScreenMode() == TS_MENU)
     {
         if (look_yaw_joy || look_pitch_joy)
