@@ -830,7 +830,11 @@ intptr_t CL_CgameSystemCalls( intptr_t *args ) {
 
 	case CG_GETMODELINFO:
 		if ( VM_IsNative( cgvm ) ) {
+#ifdef __ANDROID__ // DONT get memory from the server as it will become invalid when the map is restarted
+			return qfalse;
+#else
 			return SV_GetModelInfo( args[1], VMA( 2 ), VMA( 3 ) );
+#endif
 		} else {
 			// The intention of the syscall is to set a CGame pointer to Game VM memory
 			// to reduce memory usage and load time. This is not possible for CGame QVM
