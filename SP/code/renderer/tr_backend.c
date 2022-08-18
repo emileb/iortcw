@@ -1128,7 +1128,9 @@ void    RB_SetGL2D( void ) {
 	backEnd.refdef.floatTime = backEnd.refdef.time * 0.001;
 }
 
-
+#ifdef __ANDROID__
+static qboolean drawnCinematic = qfalse;
+#endif
 /*
 =============
 RE_StretchRaw
@@ -1151,10 +1153,8 @@ void RE_StretchRaw( int x, int y, int w, int h, int cols, int rows, const byte *
 		RB_EndSurface();
 	}
 
-#ifndef __ANDROID__
 	// we definately want to sync every frame for the cinematics
 	qglFinish();
-#endif
 
 	start = 0;
 	if ( r_speeds->integer ) {
@@ -1181,6 +1181,10 @@ void RE_StretchRaw( int x, int y, int w, int h, int cols, int rows, const byte *
 	RB_SetGL2D();
 
 	qglColor3f( tr.identityLight, tr.identityLight, tr.identityLight );
+
+#ifdef __ANDROID__
+	drawnCinematic = qtrue;
+#endif
 
 #ifdef USE_OPENGLES
 	GLfloat tex[] = {
@@ -1673,6 +1677,9 @@ void RB_ExecuteRenderCommands( const void *data ) {
 
 	t1 = ri.Milliseconds();
 
+#ifdef __ANDROID__ // Hack to clear screen if nothing is drawn
+	qboolean surfDrawn = qfalse;
+#endif
 	while ( 1 ) {
 		data = PADP(data, sizeof(void *));
 
@@ -1685,6 +1692,10 @@ void RB_ExecuteRenderCommands( const void *data ) {
 			//Check if it's time for BLOOM!
 			R_BloomScreen();
 #endif
+
+#ifdef __ANDROID__
+			surfDrawn = qtrue;
+#endif
 			data = RB_StretchPic( data );
 			break;
 		case RC_STRETCH_PIC_GRADIENT:
@@ -1692,9 +1703,15 @@ void RB_ExecuteRenderCommands( const void *data ) {
 			//Check if it's time for BLOOM!
 			R_BloomScreen();
 #endif
+#ifdef __ANDROID__
+            surfDrawn = qtrue;
+#endif
 			data = RB_StretchPicGradient( data );
 			break;
 		case RC_DRAW_SURFS:
+#ifdef __ANDROID__
+            surfDrawn = qtrue;
+#endif
 			data = RB_DrawSurfs( data );
 			break;
 		case RC_DRAW_BUFFER:
@@ -1705,12 +1722,23 @@ void RB_ExecuteRenderCommands( const void *data ) {
 			//Check if it's time for BLOOM!
 			R_BloomScreen();
 #endif
+#ifdef __ANDROID__
+			if(!surfDrawn && drawnCinematic == qfalse)
+			{
+				qglClearColor( 0, 0, 0, 1 );
+				qglClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+			}
+			drawnCinematic = qfalse;
+#endif
 			data = RB_SwapBuffers( data );
 			break;
 		case RC_SCREENSHOT:
 			data = RB_TakeScreenshotCmd( data );
 			break;
 		case RC_VIDEOFRAME:
+#ifdef __ANDROID__
+			surfDrawn = qtrue;
+#endif
 			data = RB_TakeVideoFrameCmd( data );
 			break;
 		case RC_COLORMASK:
