@@ -66,9 +66,6 @@ static int KeyIsDown(kbutton_t *b)
 extern kbutton_t kb[NUM_BUTTONS];
 
 
-static int zoomed = 0; //toggle zoom
-static int scoresShown = 0;
-
 void PortableAction(int state, int action)
 {
     LOGI("PortableAction %d %d", state, action);
@@ -155,17 +152,8 @@ void PortableAction(int state, int action)
             case PORT_ACT_ZOOM_IN:
             {
                 static SmartToggle_t smartToggle;
-                int activate = SmartToggleAction(&smartToggle, state, zoomed);
-                if (activate)
-                {
-                    zoomed = 1;
-                    PortableCommand("+zoom\n");
-                }
-                else
-                {
-                    zoomed = 0;
-                    PortableCommand("-zoom\n");
-                }
+                int activate = SmartToggleAction(&smartToggle, state, KeyIsDown(&kb[KB_WBUTTONS1]));
+                (activate) ? KeyDownPort(&kb[KB_WBUTTONS1]) : KeyUpPort(&kb[KB_WBUTTONS1]);
             }
                 break;
             case PORT_ACT_USE:
@@ -194,19 +182,18 @@ void PortableAction(int state, int action)
                 if (state)
                     PortableCommand("weapprev\n");
                 break;
+            case PORT_ACT_RELOAD:
+                (state) ? KeyDownPort(&kb[KB_WBUTTONS3]) : KeyUpPort(&kb[KB_WBUTTONS3]);
+                break;
+            case PORT_ACT_LEAN_LEFT:
+                (state) ? KeyDownPort(&kb[KB_WBUTTONS4]) : KeyUpPort(&kb[KB_WBUTTONS4]);
+                break;
+            case PORT_ACT_LEAN_RIGHT:
+                (state) ? KeyDownPort(&kb[KB_WBUTTONS5]) : KeyUpPort(&kb[KB_WBUTTONS5]);
+                break;
             case PORT_ACT_CONSOLE:
                 if (state)
                     PortableCommand("toggleconsole");
-                break;
-            case PORT_ACT_MP_SCORES:
-                if (state)
-                {
-                    if (scoresShown)
-                        PortableCommand("-scores\n");
-                    else
-                        PortableCommand("+scores\n");
-                    scoresShown = !scoresShown;
-                }
                 break;
             case PORT_ACT_QUICKSAVE:
                 if (state)
