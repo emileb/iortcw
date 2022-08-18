@@ -67,7 +67,11 @@ If you have questions concerning this license or the applicable additional terms
 #ifdef USE_XDG
   #define HOMEPATH_NAME_UNIX		"iortcw"
 #else
+#ifdef __ANDROID__
+  #define HOMEPATH_NAME_UNIX		"../user_files/iortcw"
+#else
   #define HOMEPATH_NAME_UNIX		".wolf"
+#endif
 #endif
   #define HOMEPATH_NAME_WIN		"RTCW"
   #define STEAMPATH_NAME		"Return To Castle Wolfenstein"
