@@ -30,8 +30,10 @@ If you have questions concerning this license or the applicable additional terms
 #define __Q_SHARED_H
 
 #ifdef __ANDROID__
+#ifndef LOGI
 #include <android/log.h>
 #define LOGI(...)  __android_log_print(ANDROID_LOG_INFO,"IORTCW",__VA_ARGS__)
+#endif
 #endif
 
 // q_shared.h -- included first by ALL program modules.
