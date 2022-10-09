@@ -162,6 +162,10 @@ void PortableAction(int state, int action)
             case PORT_ACT_ATTACK:
                 (state) ? KeyDownPort(&kb[KB_BUTTONS0]) : KeyUpPort(&kb[KB_BUTTONS0]);
                 break;
+            case PORT_ACT_ALT_ATTACK:
+                if (state)
+                    PortableCommand("weapalt\n");
+                break;
             case PORT_ACT_KICK:
                 (state) ? KeyDownPort(&kb[KB_KICK]) : KeyUpPort(&kb[KB_KICK]);
                 break;
