@@ -6,15 +6,19 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := iortcw
 
-RTCW_LOCAL_CFLAGS :=  -DQUAKE3 -DENGINE_NAME=\"q3lite\"    -Wall -fno-strict-aliasing -pipe -DUSE_ICON -DARCH_STRING=\"arm\" -DUSE_OPENGLES -DNO_VM_COMPILED -DNO_GZIP \
-                                                       -DUSE_INTERNAL_JPEG  \
+RTCW_LOCAL_CFLAGS :=  -DQUAKE3 -DENGINE_NAME=\"q3lite\" -Wall -fno-strict-aliasing -pipe -DUSE_ICON -DARCH_STRING=\"arm\" -DUSE_OPENGLES -DNO_VM_COMPILED -DNO_GZIP \
+                                                       -DUSE_INTERNAL_JPEG -DUSE_FILE32API \
                                                        -DFT2_BUILD_LIBRARY -DUSE_LOCAL_HEADERS -DPRODUCT_VERSION=\"1.51d-SP_GIT_191e8d10-2022-04-09\" -Wformat=2 \
                                                        -Wformat-security -Wno-format-nonliteral -Wstrict-aliasing=2 -Wmissing-format-attribute -Wdisabled-optimization \
-                                                       -MMD -DNDEBUG -DBOTLIB  -DHAVE_LRINTF -DFLOATING_POINT -DFLOAT_APPROX \
-                                                       -DUSE_ALLOCA  -DUSE_RENDERER_DLOPEN -DIOAPI_NO_64 \
+                                                       -MMD -DNDEBUG -DHAVE_LRINTF -DFLOATING_POINT -DFLOAT_APPROX \
+                                                       -DUSE_ALLOCA -DUSE_RENDERER_DLOPEN  -DIOAPI_NO_64  \
 
+# This is needed to stop 32bit arm crashing. Otherwise unaligned float access.. Not a great fix..
+RTCW_LOCAL_CFLAGS +=  -Ofast
 
+#-DIOAPI_NO_64
 #-DBUILD_FREETYPE
+#-DUSE_FILE32API
 
 LOCAL_CFLAGS := $(RTCW_LOCAL_CFLAGS)
 
@@ -41,7 +45,7 @@ PROJECT_FILES :=
 PROJECT_FILES += $(wildcard $(LOCAL_PATH)/libogg-1.3.3/src/*.c)
 PROJECT_FILES += $(wildcard $(LOCAL_PATH)/libvorbis-1.3.6/lib/*.c)
 PROJECT_FILES += $(wildcard $(LOCAL_PATH)/jpeg-8c/*.c)
-PROJECT_FILES += $(wildcard $(LOCAL_PATH)/botlib/*.c)
+
 PROJECT_FILES += $(wildcard $(LOCAL_PATH)/client/*.c)
 PROJECT_FILES += $(wildcard $(LOCAL_PATH)/qcommon/*.c)
 PROJECT_FILES += $(wildcard $(LOCAL_PATH)/server/*.c)
@@ -51,7 +55,7 @@ PROJECT_FILES += $(wildcard $(LOCAL_PATH)/splines/*.cpp)
 #PROJECT_FILES += $(wildcard $(LOCAL_PATH)/renderer/*.c)
 PROJECT_FILES += $(wildcard $(LOCAL_PATH)/sdl/*.c)
 PROJECT_FILES += $(wildcard $(LOCAL_PATH)/zlib-1.2.11/*.c)
-
+#PROJECT_FILES += $(wildcard $(LOCAL_PATH)/zlib-1.2.13/*.c)
 
 PROJECT_FILES := $(PROJECT_FILES:$(LOCAL_PATH)/%=%)
 
@@ -97,7 +101,7 @@ LOCAL_SRC_FILES =  $(PROJECT_FILES)
 
 
 LOCAL_LDLIBS := -lEGL -ldl -llog -lOpenSLES -lz -lGLESv1_CM
-LOCAL_STATIC_LIBRARIES := sigc libzip libpng logwritter  SDL2_net
+LOCAL_STATIC_LIBRARIES := sigc libzip libpng logwritter  SDL2_net iortcw_botlib.sp
 LOCAL_SHARED_LIBRARIES := touchcontrols SDL2  SDL2_mixer core_shared saffal
 
 
@@ -107,4 +111,5 @@ include $(TOP_DIR)/Alpha/iortcw/mobile/Android_renderer.mk
 include $(TOP_DIR)/Alpha/iortcw/mobile/Android_ui.mk
 include $(TOP_DIR)/Alpha/iortcw/mobile/Android_cgame.mk
 include $(TOP_DIR)/Alpha/iortcw/mobile/Android_game.mk
+include $(TOP_DIR)/Alpha/iortcw/mobile/Android_botlib.mk
 
