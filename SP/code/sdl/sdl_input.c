@@ -493,10 +493,11 @@ static void IN_InitJoystick( void )
 		Com_DPrintf("SDL_Init(SDL_INIT_GAMECONTROLLER) passed.\n");
 	}
 
+#ifndef __ANDROID__ // Stop this printing out, this fixes corrupt screen on loading as when not displayed the screen is cleared properly
 	total = SDL_NumJoysticks();
 	if ( total )
 		Com_Printf("%d possible joysticks\n", total);
-
+#endif
 	// Print list and build cvar to allow ui to select joystick.
 	for (i = 0; i < total; i++)
 	{
