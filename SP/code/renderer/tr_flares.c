@@ -367,8 +367,10 @@ void RB_TestFlare( flare_t *f ) {
 
 	visible = (qboolean)( f->flags & 1 );
 
+#ifndef USE_OPENGLES
 	if ( -f->eyeZ - -screenZ  > 24 )
 		visible = qfalse;
+#endif
 
 	if ( visible ) {
 		if ( !f->visible ) {
