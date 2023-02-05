@@ -1673,13 +1673,20 @@ RB_ExecuteRenderCommands
 ====================
 */
 void RB_ExecuteRenderCommands( const void *data ) {
-	int t1, t2;
+    int t1, t2;
 
-	t1 = ri.Milliseconds();
+    t1 = ri.Milliseconds();
 
-#ifdef __ANDROID__ // Hack to clear screen if nothing is drawn
-	qboolean surfDrawn = qfalse;
+#ifdef __ANDROID__ // Changed to always clear this, not ideal for performance but loading screen seems to draw partial screen
+                   // TODO Check if in game and disable this
+    if(!drawnCinematic)
+    {
+        qglClearColor(0, 0, 0, 1);
+        qglClear(GL_COLOR_BUFFER_BIT);
+    }
+    drawnCinematic = qfalse;
 #endif
+
 	while ( 1 ) {
 		data = PADP(data, sizeof(void *));
 
@@ -1692,10 +1699,6 @@ void RB_ExecuteRenderCommands( const void *data ) {
 			//Check if it's time for BLOOM!
 			R_BloomScreen();
 #endif
-
-#ifdef __ANDROID__
-			surfDrawn = qtrue;
-#endif
 			data = RB_StretchPic( data );
 			break;
 		case RC_STRETCH_PIC_GRADIENT:
@@ -1703,15 +1706,9 @@ void RB_ExecuteRenderCommands( const void *data ) {
 			//Check if it's time for BLOOM!
 			R_BloomScreen();
 #endif
-#ifdef __ANDROID__
-            surfDrawn = qtrue;
-#endif
 			data = RB_StretchPicGradient( data );
 			break;
 		case RC_DRAW_SURFS:
-#ifdef __ANDROID__
-            surfDrawn = qtrue;
-#endif
 			data = RB_DrawSurfs( data );
 			break;
 		case RC_DRAW_BUFFER:
@@ -1722,23 +1719,12 @@ void RB_ExecuteRenderCommands( const void *data ) {
 			//Check if it's time for BLOOM!
 			R_BloomScreen();
 #endif
-#ifdef __ANDROID__
-			if(!surfDrawn && drawnCinematic == qfalse)
-			{
-				qglClearColor( 0, 0, 0, 1 );
-				qglClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-			}
-			drawnCinematic = qfalse;
-#endif
 			data = RB_SwapBuffers( data );
 			break;
 		case RC_SCREENSHOT:
 			data = RB_TakeScreenshotCmd( data );
 			break;
 		case RC_VIDEOFRAME:
-#ifdef __ANDROID__
-			surfDrawn = qtrue;
-#endif
 			data = RB_TakeVideoFrameCmd( data );
 			break;
 		case RC_COLORMASK:
