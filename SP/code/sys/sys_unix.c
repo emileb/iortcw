@@ -83,6 +83,11 @@ char *Sys_DefaultHomePath(void)
 			else
 				Q_strcat(homePath, sizeof(homePath), HOMEPATH_NAME_MACOSX);
 		}
+#elif __ANDROID__
+		{
+			 p1 = getenv( "USER_FILES" );
+			 Com_sprintf(homePath, sizeof(homePath), "%s/iortcw", p1);
+		};
 #else
 #ifdef USE_XDG
 		if( ( p1 = getenv( "XDG_DATA_HOME" ) ) != NULL )

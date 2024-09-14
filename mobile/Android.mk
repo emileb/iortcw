@@ -6,7 +6,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := iortcw
 
-RTCW_LOCAL_CFLAGS :=  -DQUAKE3 -DENGINE_NAME=\"q3lite\" -Wall -fno-strict-aliasing -pipe -DUSE_ICON -DARCH_STRING=\"arm\" -DUSE_OPENGLES -DNO_VM_COMPILED -DNO_GZIP \
+RTCW_LOCAL_CFLAGS := -DQUAKE3 -DENGINE_NAME=\"q3lite\" -Wall -fno-strict-aliasing -pipe -DUSE_ICON -DARCH_STRING=\"arm\" -DUSE_OPENGLES -DNO_VM_COMPILED -DNO_GZIP \
                                                        -DUSE_INTERNAL_JPEG -DUSE_FILE32API \
                                                        -DFT2_BUILD_LIBRARY -DUSE_LOCAL_HEADERS -DPRODUCT_VERSION=\"1.51d-SP_GIT_191e8d10-2022-04-09\" -Wformat=2 \
                                                        -Wformat-security -Wno-format-nonliteral -Wstrict-aliasing=2 -Wmissing-format-attribute -Wdisabled-optimization \
