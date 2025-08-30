@@ -287,6 +287,11 @@ void PortableMove(float fwd, float strafe)
     PortableMoveSide(strafe);
 }
 
+bool PortableSetAlwaysRun(bool run)
+{
+    return false;
+}
+
 //======================================================================
 
 //Look up and down
