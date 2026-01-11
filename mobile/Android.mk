@@ -102,7 +102,7 @@ LOCAL_SRC_FILES =  $(PROJECT_FILES)
 
 LOCAL_LDLIBS := -lEGL -ldl -llog -lOpenSLES -lz -lGLESv1_CM
 LOCAL_STATIC_LIBRARIES := sigc libzip libpng logwritter  SDL2_net iortcw_botlib.sp
-LOCAL_SHARED_LIBRARIES := touchcontrols SDL2  SDL2_mixer core_shared saffal
+LOCAL_SHARED_LIBRARIES := touchcontrols SDL2  SDL2_mixer saffal
 
 
 include $(BUILD_SHARED_LIBRARY)
