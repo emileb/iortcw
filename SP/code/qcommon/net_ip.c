@@ -1268,7 +1268,8 @@ static void NET_AddLocalAddress(char *ifname, struct sockaddr *addr, struct sock
 	}
 }
 
-#if defined(__linux__) || defined(MACOSX) || defined(__BSD__)
+// getifaddrs() is only available from Android API 24
+#if (defined(__linux__) && !(defined(__ANDROID__) && __ANDROID_API__ < 24)) || defined(MACOSX) || defined(__BSD__)
 static void NET_GetLocalAddress(void)
 {
 	struct ifaddrs *ifap, *search;
